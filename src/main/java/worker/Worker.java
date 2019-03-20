@@ -67,7 +67,7 @@ class Worker {
 
     try {
 
-      Class.forName("com.mysql.jdbc.Driver");
+      Class.forName("com.mysql.cj.jdbc.Driver");
       String url = "jdbc:mysql://" + host + "/votes";
 
       while (conn == null) {
