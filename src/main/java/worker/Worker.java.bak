@@ -9,7 +9,7 @@ class Worker {
   public static void main(String[] args) {
     try {
       Jedis redis = connectToRedis("redis");
-      Connection dbConn = connectToDB("mysql-multimaster-cluster");
+      Connection dbConn = connectToDB("db-statefulset-primary");
 
       System.err.println("Watching vote queue");
 
@@ -30,7 +30,7 @@ class Worker {
 
   static void updateVote(Connection dbConn, String voterID, String vote) throws SQLException {
     PreparedStatement insert = dbConn.prepareStatement(
-      "INSERT INTO votes.votes (id, vote) VALUES (?, ?)");
+      "INSERT INTO votes (id, vote) VALUES (?, ?)");
     insert.setString(1, voterID);
     insert.setString(2, vote);
 
@@ -38,7 +38,7 @@ class Worker {
       insert.executeUpdate();
     } catch (SQLException e) {
       PreparedStatement update = dbConn.prepareStatement(
-        "UPDATE votes.votes SET vote = ? WHERE id = ?");
+        "UPDATE votes SET vote = ? WHERE id = ?");
       update.setString(1, vote);
       update.setString(2, voterID);
       update.executeUpdate();
@@ -67,20 +67,20 @@ class Worker {
 
     try {
 
-      Class.forName("org.mysql.Driver");
-      String url = "jdbc:mysql://" + host + "/votes";
+      Class.forName("org.postgresql.Driver");
+      String url = "jdbc:postgresql://" + host + "/postgres";
 
       while (conn == null) {
         try {
-          conn = DriverManager.getConnection(url, "root", "1vJg42xltSjSF5Mh");
+          conn = DriverManager.getConnection(url, "postgres", "");
         } catch (SQLException e) {
-          System.err.println("Waiting for Stateful mysql-multimaster-cluster db on 03/20/2019");
+          System.err.println("Waiting for Stateful PostGreSQL Primary db on 02/27/2019");
           sleep(1000);
         }
       }
 
       PreparedStatement st = conn.prepareStatement(
-        "CREATE TABLE IF NOT EXISTS votes.votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL)");
+        "CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL)");
       st.executeUpdate();
 
     } catch (ClassNotFoundException e) {
@@ -88,7 +88,7 @@ class Worker {
       System.exit(1);
     }
 
-    System.err.println("Connected to Stateful mysql-multimaster-cluster db on 03/20/2019");
+    System.err.println("Connected to Stateful PostGreSQL Primary db on 02/26/2019");
     return conn;
   }
 
