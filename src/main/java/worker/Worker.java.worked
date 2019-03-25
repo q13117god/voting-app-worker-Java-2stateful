@@ -72,9 +72,9 @@ class Worker {
 
       while (conn == null) {
         try {
-          conn = DriverManager.getConnection(url, "fooworker", "MyNewPass");
+          conn = DriverManager.getConnection(url, "root", "1vJg42xltSjSF5Mh");
         } catch (SQLException e) {
-          System.err.println("Waiting for Stateful mysql-multimaster-cluster db on 03/25/2019");
+          System.err.println("Waiting for Stateful mysql-multimaster-cluster db on 03/20/2019");
           sleep(1000);
         }
       }
@@ -88,7 +88,7 @@ class Worker {
       System.exit(1);
     }
 
-    System.err.println("Connected to Stateful mysql-multimaster-cluster db on 03/25/2019");
+    System.err.println("Connected to Stateful mysql-multimaster-cluster db on 03/20/2019");
     return conn;
   }
 
